@@ -39,7 +39,7 @@ Matrix<T> operator-(const Matrix<T>& lhs, const Matrix<T>& rhs);
 
 template <class T> 
 class Matrix {
-  private:
+  protected:
     std::size_t m_rows;
     std::size_t m_cols;
     TwoDVector<T> m_matrix;
@@ -95,10 +95,7 @@ class IdentityMatrix: public Matrix<T> {
       : Matrix<T>{size, size} 
     {
       for (std::size_t i {0}; i < this->m_rows; ++i) {
-        for (std::size_t j {0}; j < this->m_cols; ++j) {
-          if (i == j) 
-            this->m_matrix[i][j] = 1;
-        }
+        this->m_matrix[i][i] = 1;
       }
     }
 };
