@@ -22,6 +22,9 @@ For example, consider a system of 3 equations in 5 variables: x1 - x5, which is 
 An example of solving a system with an infinite number of solutions:
 
 ```cpp
+#include <iostream>
+
+#include "Solution.h"
 #include "Matrix.h"
 
 int main() {
