@@ -25,10 +25,10 @@ An example of solving a system with an infinite number of solutions:
 
 int main() {
   // A is the coefficient matrix
-  Matrix<double> A = {{0,2,2,1,-2},{0,0,1,1,1},{0,0,0,0,2}};
+  Matrix<double> A {{0,2,2,1,-2},{0,0,1,1,1},{0,0,0,0,2}};
 
   // b is the column matrix of constants
-  Matrix<double> b = {{2},{3},{4}};
+  Matrix<double> b {{2},{3},{4}};
 
   Solution solution = solve_linear_system(A, b);
 
