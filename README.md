@@ -1,4 +1,4 @@
-### Matrices in C++
+### Linear algebra from scratch
 
 - Fundamental operations:
 
