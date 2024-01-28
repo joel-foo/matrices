@@ -162,7 +162,6 @@ Solution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b) {
       }
       return Solution{.type = solutionType, .m_solutions=solutions};
     }
-    // for simplicity, all free paramters are set to 0, thus solution is almost same as the ONE_SOLUTION case. 
     case SolutionType::INFINITELY_MANY_SOLUTIONS:
     {
       std::size_t r = 0, c = 0;
