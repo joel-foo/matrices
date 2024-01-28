@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "Matrix.h"
 
 typedef Matrix<double> Md;

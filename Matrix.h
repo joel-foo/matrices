@@ -40,8 +40,8 @@ Matrix<T> operator-(const Matrix<T>& lhs, const Matrix<T>& rhs);
 template <class T> 
 class Matrix {
   protected:
-    std::size_t m_rows;
-    std::size_t m_cols;
+    int m_rows;
+    int m_cols;
     TwoDVector<T> m_matrix;
 
   public: 
@@ -80,8 +80,8 @@ class Matrix {
     //flatten 1D
     std::vector<T> flatten() const;
 
-    int getRows() const {return static_cast<int>(m_rows);}
-    int getCols() const {return static_cast<int>(m_cols);}
+    int getRows() const {return m_rows;}
+    int getCols() const {return m_cols;}
 
     // get element at (r,c)
     const T& operator()(int r, int c) const;
@@ -94,7 +94,7 @@ class Matrix {
     }
 
     //friend non member functions below:
-    friend std::size_t maxCol(std::size_t r, std::size_t c, const Matrix<double>& matrix);
+    friend int maxCol(int r, int c, const Matrix<double>& matrix);
 
     //produces a matrix of Row Echelon Form (REF), note: all zero rows are guaranteed to be at bottom of both the REF and RREF. 
     friend Matrix<double> gaussian_elimination(const Matrix<double>& matrix);
@@ -122,7 +122,7 @@ class IdentityMatrix: public Matrix<T> {
     IdentityMatrix(int size) 
       : Matrix<T>{size, size} 
     {
-      for (std::size_t i = 0; i < this->m_rows; ++i) {
+      for (int i = 0; i < this->m_rows; ++i) {
         this->m_matrix[i][i] = 1;
       }
     }
@@ -136,8 +136,8 @@ Matrix<T>::Matrix(int rows, int cols, T init) {
   if (cols <= 0) {
       throw std::runtime_error("rows must be > 0!");
   }
-  m_rows = static_cast<std::size_t>(rows);
-  m_cols = static_cast<std::size_t>(cols);
+  m_rows = rows;
+  m_cols = cols;
   m_matrix = TwoDVector<T>(m_rows, std::vector<T>(m_cols, init));
 }
 
@@ -146,7 +146,7 @@ Matrix<T>::Matrix(const TwoDVector<T>& matrix) {
   if (matrix.empty()) {
     throw std::runtime_error("Matrix cannot be empty");
   }
-  std::set<std::size_t> cols;
+  std::set<int> cols;
   for (const auto& row: matrix) {
     cols.insert(row.size());
     if (cols.size() > 1) {
@@ -195,8 +195,8 @@ Matrix<T>& Matrix<T>::operator+=(const Matrix& rhs) {
   if (m_cols != rhs.m_cols) {
     throw std::runtime_error("Number of columns must be equal!");
   }
-  for (std::size_t i = 0; i < m_rows; ++i) {
-    for (std::size_t j = 0; j < m_cols; ++j) {
+  for (int i = 0; i < m_rows; ++i) {
+    for (int j = 0; j < m_cols; ++j) {
       m_matrix[i][j] += rhs.m_matrix[i][j];
     }
   }
@@ -213,8 +213,8 @@ Matrix<T> operator+(const Matrix<T>& lhs, const Matrix<T>& rhs) {
 
 template<class T>
 Matrix<T>& Matrix<T>::operator*=(const int rhs) {
-  for (std::size_t i = 0; i < m_rows; ++i) {
-    for (std::size_t j = 0; j < m_cols; ++j) {
+  for (int i = 0; i < m_rows; ++i) {
+    for (int j = 0; j < m_cols; ++j) {
       m_matrix[i][j] *= rhs;
     }
   }
@@ -247,9 +247,9 @@ Matrix<T> operator*(const Matrix<T>& lhs, const Matrix<T>& rhs) {
   }  
   // normal method
   Matrix<T> result {lhs.getRows(), rhs.getCols()};
-  for (std::size_t i = 0; i < result.m_rows; ++i) {
-    for (std::size_t j = 0; j < result.m_cols; ++j) {
-      for (std::size_t k = 0; k < lhs.m_cols; ++k) {
+  for (int i = 0; i < result.m_rows; ++i) {
+    for (int j = 0; j < result.m_cols; ++j) {
+      for (int k = 0; k < lhs.m_cols; ++k) {
         result.m_matrix[i][j] += lhs.m_matrix[i][k] * rhs.m_matrix[k][j];
       } 
     }
@@ -266,8 +266,8 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix& rhs) {
   if (m_cols != rhs.m_cols) {
     throw std::runtime_error("Number of columns must be equal!");
   }
-  for (std::size_t i = 0; i < m_rows; ++i) {
-    for (std::size_t j = 0; j < m_cols; ++j) {
+  for (int i = 0; i < m_rows; ++i) {
+    for (int j = 0; j < m_cols; ++j) {
       m_matrix[i][j] -= rhs.m_matrix[i][j];
     }
   }
@@ -285,8 +285,8 @@ Matrix<T> operator-(const Matrix<T>& lhs, const Matrix<T>& rhs) {
 template<class T>
 Matrix<T> Matrix<T>::transpose() const {
   Matrix<T> result {getCols(), getRows()};
-  for (std::size_t i = 0; i < m_cols; ++i) {
-    for (std::size_t j = 0; j < m_rows; ++j) {
+  for (int i = 0; i < m_cols; ++i) {
+    for (int j = 0; j < m_rows; ++j) {
       result.m_matrix[i][j] = m_matrix[j][i];
     }
   }
@@ -301,7 +301,7 @@ Matrix<T> Matrix<T>::concat(const Matrix<T>& rhs, int axis) const {
       throw std::runtime_error("Fail to join horizontally due to mismatched row number");
     }
     Matrix<T> result = *this;
-    for (std::size_t i = 0; i < m_rows; ++i) {
+    for (int i = 0; i < m_rows; ++i) {
       auto& leftRow = result.m_matrix[i], rightRow = rhs.m_matrix[i];
       leftRow.insert(leftRow.end(), rightRow.begin(), rightRow.end());
     }
@@ -331,24 +331,24 @@ std::vector<T> Matrix<T>::flatten() const {
 
 template<class T>
 const T& Matrix<T>::operator()(int r, int c) const {
-  if (r < 0 or r >= getRows()) {
+  if (r < 0 or r >= m_rows) {
     throw std::runtime_error("Invalid row");
   }
-  if (c < 0 or c >= getCols()) {
+  if (c < 0 or c >= m_cols) {
     throw std::runtime_error("Invalid column");
   }
-  return m_matrix[static_cast<std::size_t>(r)][static_cast<std::size_t>(c)];
+  return m_matrix[r][c];
 }
 
 template<class T>
 T& Matrix<T>::operator()(int r, int c) {
-  if (r < 0 or r >= getRows()) {
+  if (r < 0 or r >= m_rows) {
     throw std::runtime_error("Invalid row");
   }
-  if (c < 0 or c >= getCols()) {
+  if (c < 0 or c >= m_cols) {
     throw std::runtime_error("Invalid column");
   }
-  return m_matrix[static_cast<std::size_t>(r)][static_cast<std::size_t>(c)];
+  return m_matrix[r][c];
 }
 
 #endif

@@ -1,4 +1,10 @@
+#include <cmath>
 #include <iomanip>
+#include <optional>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "Solution.h"
 
@@ -15,7 +21,7 @@ std::ostream& operator<< (std::ostream& out, Solution s) {
     }
     return out;
   }
-  std::unordered_map<std::size_t, std::string> freeVariableToValMap;
+  std::unordered_map<int, std::string> freeVariableToValMap;
   int freeVariableCount = 1;
   // actual parameterizations of the free variables i.e. a1, a2,...
   std::vector<std::string> freeVariableVec;
@@ -27,7 +33,7 @@ std::ostream& operator<< (std::ostream& out, Solution s) {
   int variableCount = 1;
   for (std::size_t i = 0; i < s.m_solutions.size(); ++i) {
     out << 'x' + std::to_string(variableCount++) << ":";
-    if (s.freeVariables.find(i) != s.freeVariables.end()) {
+    if (s.freeVariables.contains(i)) {
       out << freeVariableToValMap[i];
     } else {
       auto& solution = s.m_solutions[i];

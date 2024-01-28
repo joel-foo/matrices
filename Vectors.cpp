@@ -1,3 +1,8 @@
+#include <algorithm>
+#include <cmath>
+#include <vector>
+
+#include "FloatingPoint.h"
 #include "Vectors.h"
 
 bool operator==(const std::vector<double>& v1, const std::vector<double>& v2){

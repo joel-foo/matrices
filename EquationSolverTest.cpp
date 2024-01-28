@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <cassert>
+#include <vector>
 
 #include "EquationSolverTest.h"
 #include "Matrix.h"
@@ -59,7 +61,7 @@ namespace EquationSolverTest {
     assert(S.toString() == "x1: 10, x2: 2, x3: -6, x4: 1");
 
     // verify that for nxn matrix, we can get x = A^-1*b directly.
-    auto x = (inverse(a) * b).flatten();
+    std::vector<double> x = (inverse(a) * b).flatten();
     std::vector<double> y;
     // resize = allocation + instance creation; reserve = allocation only
     y.resize(x.size());

@@ -13,8 +13,8 @@ using TwoDVector = std::vector<std::vector<T>>;
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const std::vector<T>& vec) {
   out << "(";
-  std::size_t len = vec.size();
-  for(std::size_t i = 0; i < len; ++i) {
+  int len = vec.size();
+  for (int i = 0; i < len; ++i) {
     out << vec[i];
     if (i != len - 1) {
       out << ", ";
@@ -26,9 +26,9 @@ std::ostream& operator<<(std::ostream& out, const std::vector<T>& vec) {
 
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const TwoDVector<T>& vec) {
-  std::size_t rows = vec.size();
+  int rows = vec.size();
   out << "(";
-  for(std::size_t i = 0; i < rows; ++i) {
+  for (int i = 0; i < rows; ++i) {
     out << vec[i];
     if (i != rows - 1) {
       out << ", ";

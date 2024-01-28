@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "EquationSolverTest.h"
 #include "MatrixTest.h"
 #include "Theorems.h"

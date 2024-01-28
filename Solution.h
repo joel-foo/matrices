@@ -15,7 +15,7 @@ enum class SolutionType {
   INFINITELY_MANY_SOLUTIONS
 };
 
-typedef std::pair<double, std::optional<std::unordered_map<std::size_t, double>>> solutionPair; 
+typedef std::pair<double, std::optional<std::unordered_map<int, double>>> solutionPair; 
 
 struct Solution;
 
@@ -24,7 +24,7 @@ std::ostream& operator<< (std::ostream& out, Solution s);
 struct Solution {
   SolutionType type;
   std::vector<solutionPair> m_solutions;
-  std::set<std::size_t> freeVariables;
+  std::set<int> freeVariables;
   int num_free_variables;
 
   auto get_compute_function() {
@@ -33,7 +33,7 @@ struct Solution {
         throw std::runtime_error("Passed in incorrect number of values for free variables. You need to pass in " + std::to_string(freeVariables.size()) + " values!");
       }
       // create mapping from list passed in to free variables
-      std::unordered_map<std::size_t, double> freeVariableMap; 
+      std::unordered_map<int, double> freeVariableMap; 
       auto setIt = freeVariables.begin();
       for (auto it = lst.begin(); it != lst.end(); ++it) {
         freeVariableMap[*setIt] = *it;
