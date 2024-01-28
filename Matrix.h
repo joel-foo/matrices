@@ -1,15 +1,15 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <cmath>
 #include <cstddef>
 #include <iostream>
 #include <initializer_list>
 #include <set>
 #include <vector>
 
-// typedefs do not work with template paramteters, but using does!
-template <typename T> 
-using TwoDVector = std::vector<std::vector<T>>;
+#include "Solution.h"
+#include "Vectors.h"
 
 template <typename T> 
 using TwoDList = std::initializer_list<std::initializer_list<T>>;
@@ -73,8 +73,15 @@ class Matrix {
     //transpose
     Matrix transpose() const;
 
-    std::size_t getRows() const {return m_rows;}
-    std::size_t getCols() const {return m_cols;}
+    //concat 
+    //axis = 0 -> horizontal; 1 -> vertical
+    Matrix concat(const Matrix<T>& rhs, int axis=0) const;
+
+    //flatten 1D
+    std::vector<T> flatten() const;
+
+    int getRows() const {return static_cast<int>(m_rows);}
+    int getCols() const {return static_cast<int>(m_cols);}
 
     // get element at (r,c)
     const T& operator()(int r, int c) const;
@@ -85,6 +92,27 @@ class Matrix {
     bool operator==(const Matrix& other) const{
       return m_matrix == other.m_matrix;
     }
+
+    //friend non member functions below:
+    friend std::size_t maxCol(std::size_t r, std::size_t c, const Matrix<double>& matrix);
+
+    //produces a matrix of Row Echelon Form (REF), note: all zero rows are guaranteed to be at bottom of both the REF and RREF. 
+    friend Matrix<double> gaussian_elimination(const Matrix<double>& matrix);
+
+    //produces a matrix of Reduced Row Echelon Form (RREF). note: RREF is unique while REF is not. 
+    friend Matrix<double> gauss_jordan_elimination(const Matrix<double>& matrix);
+
+    friend int getRank(const Matrix<double>& m);
+
+    // row space and col space are obtained from RREF for simplicity. 
+    friend TwoDVector<double> getRowSpace(const Matrix<double>& m);
+    friend TwoDVector<double> getColSpace(const Matrix<double>& m);
+
+    friend Matrix<double> inverse(const Matrix<double>& m);
+
+    friend SolutionType get_solution_type(const Matrix<double>& A);
+
+    friend Solution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b);
 };
 
 
@@ -94,7 +122,7 @@ class IdentityMatrix: public Matrix<T> {
     IdentityMatrix(int size) 
       : Matrix<T>{size, size} 
     {
-      for (std::size_t i {0}; i < this->m_rows; ++i) {
+      for (std::size_t i = 0; i < this->m_rows; ++i) {
         this->m_matrix[i][i] = 1;
       }
     }
@@ -115,7 +143,7 @@ Matrix<T>::Matrix(int rows, int cols, T init) {
 
 template<class T>
 Matrix<T>::Matrix(const TwoDVector<T>& matrix) {
-  if (matrix.size() == 0) {
+  if (matrix.empty()) {
     throw std::runtime_error("Matrix cannot be empty");
   }
   std::set<std::size_t> cols;
@@ -161,15 +189,15 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& m) {
 //member functions return *this so we can chain multiple operations
 template<class T>
 Matrix<T>& Matrix<T>::operator+=(const Matrix& rhs) {
-  if (this->m_rows != rhs.m_rows) {
+  if (m_rows != rhs.m_rows) {
     throw std::runtime_error("Number of rows must be equal!");
   }
-  if (this->m_cols != rhs.m_cols) {
+  if (m_cols != rhs.m_cols) {
     throw std::runtime_error("Number of columns must be equal!");
   }
-  for (std::size_t i {0}; i < this->m_rows; ++i) {
-    for (std::size_t j {0}; j < this->m_cols; ++j) {
-      this->m_matrix[i][j] += rhs.m_matrix[i][j];
+  for (std::size_t i = 0; i < m_rows; ++i) {
+    for (std::size_t j = 0; j < m_cols; ++j) {
+      m_matrix[i][j] += rhs.m_matrix[i][j];
     }
   }
   return *this;
@@ -185,9 +213,9 @@ Matrix<T> operator+(const Matrix<T>& lhs, const Matrix<T>& rhs) {
 
 template<class T>
 Matrix<T>& Matrix<T>::operator*=(const int rhs) {
-  for (std::size_t i {0}; i < this->m_rows; ++i) {
-    for (std::size_t j {0}; j < this->m_cols; ++j) {
-      this->m_matrix[i][j] *= rhs;
+  for (std::size_t i = 0; i < m_rows; ++i) {
+    for (std::size_t j = 0; j < m_cols; ++j) {
+      m_matrix[i][j] *= rhs;
     }
   }
   return *this;
@@ -218,10 +246,10 @@ Matrix<T> operator*(const Matrix<T>& lhs, const Matrix<T>& rhs) {
     throw std::runtime_error("Rows and cols dimension mismatch!");
   }  
   // normal method
-  Matrix<T> result {static_cast<int>(lhs.m_rows), static_cast<int>(rhs.m_cols)};
-  for (std::size_t i {0}; i < result.m_rows; ++i) {
-    for (std::size_t j {0}; j < result.m_cols; ++j) {
-      for (std::size_t k {0}; k < lhs.m_cols; ++k) {
+  Matrix<T> result {lhs.getRows(), rhs.getCols()};
+  for (std::size_t i = 0; i < result.m_rows; ++i) {
+    for (std::size_t j = 0; j < result.m_cols; ++j) {
+      for (std::size_t k = 0; k < lhs.m_cols; ++k) {
         result.m_matrix[i][j] += lhs.m_matrix[i][k] * rhs.m_matrix[k][j];
       } 
     }
@@ -232,15 +260,15 @@ Matrix<T> operator*(const Matrix<T>& lhs, const Matrix<T>& rhs) {
 
 template<class T>
 Matrix<T>& Matrix<T>::operator-=(const Matrix& rhs) {
-  if (this->m_rows != rhs.m_rows) {
+  if (m_rows != rhs.m_rows) {
     throw std::runtime_error("Number of rows must be equal!");
   }
-  if (this->m_cols != rhs.m_cols) {
+  if (m_cols != rhs.m_cols) {
     throw std::runtime_error("Number of columns must be equal!");
   }
-  for (std::size_t i {0}; i < this->m_rows; ++i) {
-    for (std::size_t j {0}; j < this->m_cols; ++j) {
-      this->m_matrix[i][j] -= rhs.m_matrix[i][j];
+  for (std::size_t i = 0; i < m_rows; ++i) {
+    for (std::size_t j = 0; j < m_cols; ++j) {
+      m_matrix[i][j] -= rhs.m_matrix[i][j];
     }
   }
   return *this;
@@ -256,21 +284,57 @@ Matrix<T> operator-(const Matrix<T>& lhs, const Matrix<T>& rhs) {
 
 template<class T>
 Matrix<T> Matrix<T>::transpose() const {
-  Matrix<T> result {static_cast<int>(this->m_cols), static_cast<int>(this->m_rows)};
-  for (std::size_t i {0}; i < this->m_cols; ++i) {
-    for (std::size_t j{0}; j < this->m_rows; ++j) {
-      result.m_matrix[i][j] = this->m_matrix[j][i];
+  Matrix<T> result {getCols(), getRows()};
+  for (std::size_t i = 0; i < m_cols; ++i) {
+    for (std::size_t j = 0; j < m_rows; ++j) {
+      result.m_matrix[i][j] = m_matrix[j][i];
     }
   }
   return result;
 }
 
+template <class T>
+Matrix<T> Matrix<T>::concat(const Matrix<T>& rhs, int axis) const {
+  // horizontal
+  if (!axis) {
+    if (m_rows != rhs.m_rows) {
+      throw std::runtime_error("Fail to join horizontally due to mismatched row number");
+    }
+    Matrix<T> result = *this;
+    for (std::size_t i = 0; i < m_rows; ++i) {
+      auto& leftRow = result.m_matrix[i], rightRow = rhs.m_matrix[i];
+      leftRow.insert(leftRow.end(), rightRow.begin(), rightRow.end());
+    }
+    result.m_cols += rhs.m_cols;
+    return result;
+  } else {
+     // vertical
+    if (m_cols != rhs.m_cols) {
+      throw std::runtime_error("Fail to join vertically due to mismatched col number");
+    }
+    Matrix<T> result = *this;
+    auto& leftMatrix = result.m_matrix, rightMatrix = rhs.m_matrix;
+    leftMatrix.insert(leftMatrix.end(), rightMatrix.begin(), rightMatrix.end());
+    result.m_rows += rhs.m_rows;
+    return result;
+  }
+}
+
+template<class T>
+std::vector<T> Matrix<T>::flatten() const {
+  std::vector<T> vec;
+  for(const auto& row: m_matrix) {
+    vec.insert(vec.end(), row.begin(), row.end());
+  }
+  return vec;
+}
+
 template<class T>
 const T& Matrix<T>::operator()(int r, int c) const {
-  if (r < 0 or r >= static_cast<int>(m_rows)) {
+  if (r < 0 or r >= getRows()) {
     throw std::runtime_error("Invalid row");
   }
-  if (c < 0 or c >= static_cast<int>(m_cols)) {
+  if (c < 0 or c >= getCols()) {
     throw std::runtime_error("Invalid column");
   }
   return m_matrix[static_cast<std::size_t>(r)][static_cast<std::size_t>(c)];
@@ -278,10 +342,10 @@ const T& Matrix<T>::operator()(int r, int c) const {
 
 template<class T>
 T& Matrix<T>::operator()(int r, int c) {
-  if (r < 0 or r >= static_cast<int>(m_rows)) {
+  if (r < 0 or r >= getRows()) {
     throw std::runtime_error("Invalid row");
   }
-  if (c < 0 or c >= static_cast<int>(m_cols)) {
+  if (c < 0 or c >= getCols()) {
     throw std::runtime_error("Invalid column");
   }
   return m_matrix[static_cast<std::size_t>(r)][static_cast<std::size_t>(c)];
