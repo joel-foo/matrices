@@ -31,31 +31,31 @@ namespace EquationSolverTest {
     Md a {{1,2,1},{2,-2,2},{4,8,4}};
     Md b {{1}, {2}, {-4}};
     auto S = solve_linear_system(a, b);
-    assert(S.freeVariables.empty());
+    assert(S.num_free_variables == 0);
     assert(S.m_solutions.empty());
 
     // infinite solutions
     a = {{1,1,2}, {3,3,6}};
     b = {{1}, {3}};    
     S = solve_linear_system(a, b);
-    auto fun = S.compute_solution();
+    auto fun = S.get_compute_function();
 
-    assert(S.freeVariables.size() == 2);
+    assert(S.num_free_variables == 2);
     assert(S.toString() == "x1:1-a1-2a2, x2:a1, x3:a2 where a1, a2 are arbitrary parameters");
     assert(fun({1,2}) == std::vector<double>({-4,1,2}));
 
     a = {{0,0,2,4,2},{1,2,4,5,3},{-2,-4,-5,-4,3}};
     b = {{8},{-9},{6}};
     S = solve_linear_system(a, b);
-    assert(S.freeVariables.size() == 2);
+    assert(S.num_free_variables == 2);
     assert(S.toString() == "x1:-29-2a1+3a2, x2:a1, x3:8-2a2, x4:a2, x5:-4 where a1, a2 are arbitrary parameters");
-    assert(S.compute_solution()({1,2}) == std::vector<double>({-25,1,4,2,-4}));
+    assert(S.get_compute_function()({1,2}) == std::vector<double>({-25,1,4,2,-4}));
 
     // only one solution
     a = {{1,0,0,0},{1,1,1,1},{1,3,9,27},{1,4,16,64}};
     b = {{10},{7},{-11},{-14}};
     S = solve_linear_system(a, b);
-    assert(S.freeVariables.empty());
+    assert(S.num_free_variables == 0);
     assert(S.toString() == "x1: 10, x2: 2, x3: -6, x4: 1");
 
     // verify that for nxn matrix, we can get x = A^-1*b directly.
@@ -69,8 +69,13 @@ namespace EquationSolverTest {
     a = {{1,1,2}, {1,-1,-1}, {1,1,-1}};
     b = {{1}, {0}, {2}};
     S = solve_linear_system(a, b);
-    assert(S.freeVariables.empty());
+    assert(S.num_free_variables == 0);
     assert(S.toString() == "x1: 0.667, x2: 1, x3: -0.333");
+
+    a = {{0,2,2,1,-2},{0,0,1,1,1},{0,0,0,0,2}};
+    b = {{2},{3},{4}};
+    auto s = solve_linear_system(a, b);
+    std::cout << s.num_free_variables << "\n";
   }
 
   void run() {

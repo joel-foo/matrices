@@ -219,7 +219,7 @@ Solution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b) {
       for(std::size_t i = 0; i < RREF.m_cols - 1; ++i) {
         solutions.emplace_back(solutionMap[i]);
       } 
-      return Solution{.type = solutionType, .m_solutions=solutions, .freeVariables=non_pivot_cols};
+      return Solution{.type = solutionType, .m_solutions=solutions, .freeVariables=non_pivot_cols, .num_free_variables=static_cast<int>(non_pivot_cols.size())};
     }
   }
 }

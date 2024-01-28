@@ -25,8 +25,9 @@ struct Solution {
   SolutionType type;
   std::vector<solutionPair> m_solutions;
   std::set<std::size_t> freeVariables;
+  int num_free_variables;
 
-  auto compute_solution() {
+  auto get_compute_function() {
     return [&](std::initializer_list<double> lst) -> std::vector<double> {
       if (lst.size() != freeVariables.size()) {
         throw std::runtime_error("Passed in incorrect number of values for free variables. You need to pass in " + std::to_string(freeVariables.size()) + " values!");
