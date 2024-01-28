@@ -6,6 +6,7 @@
   - Matrix subtraction
   - Matrix and scalar multiplication
   - Transpose
+  - Flatten
   - Concatenating two matrices either horizontally or vertically
 
 - Other operations:
@@ -16,7 +17,7 @@
   - Column space of matrix
   - **Solving linear systems (any kind!)**
 
-For example, consider a system of equations in 5 variables: x1 - x5, which is represented as a coefficient matrix A and column vector of constants b. Note that the types of these matrices must be parametrised with `Double`, in the cases where solving equations are involved.
+For example, consider a system of 3 equations in 5 variables: x1 - x5, which is represented as a coefficient matrix A and column vector of constants b. Note that the types of these matrices must be parametrised with `Double`, in the cases where solving equations are involved.
 
 An example of solving a system with an infinite number of solutions:
 

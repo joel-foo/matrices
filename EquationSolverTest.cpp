@@ -71,11 +71,6 @@ namespace EquationSolverTest {
     S = solve_linear_system(a, b);
     assert(S.num_free_variables == 0);
     assert(S.toString() == "x1: 0.667, x2: 1, x3: -0.333");
-
-    a = {{0,2,2,1,-2},{0,0,1,1,1},{0,0,0,0,2}};
-    b = {{2},{3},{4}};
-    auto s = solve_linear_system(a, b);
-    std::cout << s.num_free_variables << "\n";
   }
 
   void run() {
