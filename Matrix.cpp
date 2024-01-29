@@ -200,9 +200,9 @@ SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>
 
       // iterate backwards - bottom up DP :)
       for (auto it = pivot_cols.rbegin(); it != pivot_cols.rend(); ++it) {
-        auto currCol = *it; 
-        auto currRow = pivot_col_to_row_map[currCol];
-        auto rhsVal = matrix[currRow][RREF.m_cols - 1];
+        int currCol = *it; 
+        int currRow = pivot_col_to_row_map[currCol];
+        double rhsVal = matrix[currRow][RREF.m_cols - 1];
         //value component
         for (int c = currCol + 1; c < RREF.m_cols - 1; ++c) {
           if (matrix[currRow][c] == 0) continue;
@@ -222,7 +222,7 @@ SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>
         solutionMap[currCol].val += rhsVal;
       }
       for (int i = 0; i < RREF.m_cols - 1; ++i) {
-        solutions.emplace_back(solutionMap[i]);
+        solutions.emplace_back(std::move(solutionMap[i]));
       } 
       return SystemSolution{.type = solutionType, .m_solutions=solutions, .free_variables=non_pivot_cols, .num_free_variables=static_cast<int>(non_pivot_cols.size())};
     }
