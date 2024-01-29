@@ -1,12 +1,10 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H 
 
-#include <optional>
 #include <set>
 #include <sstream> 
 #include <string>
 #include <unordered_map>
-#include <utility>
 
 #include "Vectors.h"
 
@@ -16,51 +14,62 @@ enum class SolutionType {
   INFINITELY_MANY_SOLUTIONS
 };
 
-typedef std::pair<double, std::optional<std::unordered_map<int, double>>> solutionPair; 
+struct SystemSolution;
 
-struct Solution;
+std::ostream& operator<< (std::ostream& out, SystemSolution s);
 
-std::ostream& operator<< (std::ostream& out, Solution s);
+struct VariableSolution {
+  double val;
+  std::unordered_map<int, double> variable_count_map; 
+  
+  bool contains_free_variables() const {
+    return !variable_count_map.empty();
+  }
+};
 
-struct Solution {
+struct SystemSolution {
   SolutionType type;
-  std::vector<solutionPair> m_solutions;
-  std::set<int> freeVariables;
+  std::vector<VariableSolution> m_solutions;
+  std::set<int> free_variables;
   int num_free_variables;
 
   auto get_compute_function() {
     return [&](std::initializer_list<double> lst) -> std::vector<double> {
-      if (lst.size() != freeVariables.size()) {
-        throw std::runtime_error("Passed in incorrect number of values for free variables. You need to pass in " + std::to_string(freeVariables.size()) + " values!");
+      if (lst.size() != free_variables.size()) {
+        throw std::runtime_error("Passed in incorrect number of values for free variables. You need to pass in " + std::to_string(free_variables.size()) + " values!");
       }
       // create mapping from list passed in to free variables
-      std::unordered_map<int, double> freeVariableMap; 
-      auto setIt = freeVariables.begin();
+      std::unordered_map<int, double> free_variable_val_map; 
+      auto setIt = free_variables.begin();
       for (auto it = lst.begin(); it != lst.end(); ++it) {
-        freeVariableMap[*setIt] = *it;
+        free_variable_val_map[*setIt] = *it;
         ++setIt;
       }
-      std::vector<double> realSolution;
+      std::vector<double> res;
       for (std::size_t i = 0; i < m_solutions.size(); ++i) {
-        if (freeVariables.find(i) != freeVariables.end()) {
-          realSolution.emplace_back(freeVariableMap[i]);
+        if (free_variables.contains(i)) {
+          res.emplace_back(free_variable_val_map[i]);
           continue;
         }
         auto& solution = m_solutions[i];
-        if (!solution.second.has_value()) {
-          realSolution.emplace_back(solution.first);
+        if (!solution.contains_free_variables()) {
+          res.emplace_back(solution.val);
         } else {
-          auto map = solution.second.value();
-          double acc = solution.first;
+          auto& map = solution.variable_count_map;
+          double acc = solution.val;
           for (const auto& [key, val]: map) {
-            acc += val * freeVariableMap[key];
+            acc += val * free_variable_val_map[key];
           }
-          realSolution.emplace_back(acc);
+          res.emplace_back(acc);
         }
       }
-      return realSolution;
+      return res;
     };
   }
+
+  bool contains_free_variables() const {
+    return !free_variables.empty();
+  };
 
   std::string toString() const {
     std::stringstream ss;

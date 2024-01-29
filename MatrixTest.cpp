@@ -78,19 +78,19 @@ namespace MatrixTest {
 
     void test_get_rank() {
       Md A {{1,2,1},{-2,-3,1},{3,5,0}};
-      assert(getRank(A) == 2);
+      assert(get_rank(A) == 2);
     }
 
     void test_get_row_space(){
       Md A {{1,2,1},{-2,-3,1},{3,5,0}};
       TwoDVector<double> expected {{1,0,-5}, {0,1,3}};
-      assert(getRowSpace(A) == expected);
+      assert(get_row_space(A) == expected);
     }
 
     void test_get_col_space() {
       Md A {{1,2,1},{-2,-3,1},{3,5,0}};
       TwoDVector<double> expected {{1,0,0}, {0,1,0}};
-      assert(getColSpace(A) == expected);
+      assert(get_col_space(A) == expected);
     }
 
     void test_inverse() {

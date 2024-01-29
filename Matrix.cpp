@@ -1,7 +1,6 @@
 #include <cmath>
 #include <set>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
 #include "FloatingPoint.h"
@@ -9,7 +8,7 @@
 #include "Solution.h"
 #include "Vectors.h"
 
-int maxCol(int r, int c, const Matrix<double>& m) {
+int compute_max_in_col(int r, int c, const Matrix<double>& m) {
   const TwoDVector<double>& matrix = m.m_matrix;
   double max_val = std::abs(matrix[r][c]);
   int row = r;
@@ -29,7 +28,7 @@ Matrix<double> gaussian_elimination(const Matrix<double>& m) {
   int r = 0, c = 0;
   while (r < result.m_rows && c < result.m_cols) {
     // finds the row which gives the max abs value in cth column (from rth row inclusive)
-    int row_i = maxCol(r, c, matrix);
+    int row_i = compute_max_in_col(r, c, matrix);
     // if max pivot == 0, move to next col
     if (matrix[row_i][c] == 0) {
       ++c;
@@ -85,7 +84,7 @@ Matrix<double> gauss_jordan_elimination(const Matrix<double>& m) {
   return result;
 }
 
-int getRank(const Matrix<double>& m) {
+int get_rank(const Matrix<double>& m) {
   auto result = gaussian_elimination(m);
   auto& matrix = result.m_matrix;
   int r = 0, c = 0;
@@ -99,47 +98,47 @@ int getRank(const Matrix<double>& m) {
 }
 
 
-TwoDVector<double> getRowSpace(const Matrix<double>& m) {
+TwoDVector<double> get_row_space(const Matrix<double>& m) {
   auto result = gauss_jordan_elimination(m);
   auto& matrix = result.m_matrix;
-  int rank = getRank(m);
-  TwoDVector<double> rowSpace(matrix.begin(), matrix.begin() + rank);
-  return rowSpace;
+  int rank = get_rank(m);
+  TwoDVector<double> row_space(matrix.begin(), matrix.begin() + rank);
+  return row_space;
 }
 
-TwoDVector<double> getColSpace(const Matrix<double>& m) {
-  TwoDVector<double> colSpace;
+TwoDVector<double> get_col_space(const Matrix<double>& m) {
+  TwoDVector<double> col_space;
   auto result = gauss_jordan_elimination(m);
   auto& matrix = result.m_matrix;
-  std::vector<int> colIdxs;
+  std::vector<int> col_idxs;
   int r = 0, c = 0;
   while (r < result.m_rows && c < result.m_cols) {
     if (matrix[r][c] != 0) {
-      colIdxs.emplace_back(c);
+      col_idxs.emplace_back(c);
       ++r;
     } 
     ++c;
   }
-  for (auto i: colIdxs) {
-    std::vector<double> colVec;
+  for (auto i: col_idxs) {
+    std::vector<double> col_vec;
     for (int j = 0; j < result.m_rows; ++j) {
-      colVec.emplace_back(matrix[j][i]);
+      col_vec.emplace_back(matrix[j][i]);
     }
-    colSpace.emplace_back(std::move(colVec));
+    col_space.emplace_back(std::move(col_vec));
   }
-  return colSpace;
+  return col_space;
 }
 
 Matrix<double> inverse(const Matrix<double>& matrix) {
   if (matrix.m_rows != matrix.m_cols) {
     throw std::runtime_error("Number of rows must equal number of columns!");
   }
-  if (getRank(matrix) != matrix.m_rows) {
+  if (get_rank(matrix) != matrix.m_rows) {
     throw std::runtime_error("Matrix is not invertible!");
   }
   int rank = matrix.m_rows;
-  auto augmentedMatrix = matrix.concat(IdentityMatrix<double>(static_cast<int>(rank)));
-  auto result = gauss_jordan_elimination(augmentedMatrix);
+  auto augmented_matrix = matrix.concat(IdentityMatrix<double>(rank));
+  auto result = gauss_jordan_elimination(augmented_matrix);
   TwoDVector<double> vec;
   for(int i = 0; i < rank; i++) {
     std::vector<double> v(result.m_matrix[i].begin() + rank, result.m_matrix[i].end());
@@ -151,26 +150,26 @@ Matrix<double> inverse(const Matrix<double>& matrix) {
 // solves the equation Ax = b 
 // => given m equations, n unknowns.
 // => A is a m x n matrix, x is n x 1, b is a m x 1 column matrix. 
-Solution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b) {
+SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b) {
   // a special case: assuming A is nxn, if A is invertible => x = A^-1(b), x is unique IFF A is invertible (t)
   // proof: https://www.quora.com/How-do-I-show-that-AX-B-has-a-unique-solution-if-and-only-if-Matrix-A-is-invertible.
   if (A.m_rows != b.m_rows) {
     throw std::runtime_error("A and b need to have the same number of rows");
   }
-  auto augmentedMatrix = A.concat(b);
-  auto RREF = gauss_jordan_elimination(augmentedMatrix);
-  int numVariables = A.m_cols;
+  auto augmented_matrix = A.concat(b);
+  auto RREF = gauss_jordan_elimination(augmented_matrix);
+  int num_variables = A.m_cols;
   SolutionType solutionType = get_solution_type(RREF);
   switch (solutionType) {
     case SolutionType::NO_SOLUTION:
-      return Solution{.type = solutionType};
+      return SystemSolution{.type = solutionType};
     case SolutionType::ONE_SOLUTION:
     {
-      std::vector<solutionPair> solutions;
-      for (int i = 0; i < numVariables; ++i) {
-        solutions.emplace_back(std::make_pair(RREF.m_matrix[i][RREF.m_cols - 1], std::nullopt));
+      std::vector<VariableSolution> solutions;
+      for (int i = 0; i < num_variables; ++i) {
+        solutions.emplace_back(VariableSolution{.val=RREF.m_matrix[i][RREF.m_cols - 1]});
       }
-      return Solution{.type = solutionType, .m_solutions=solutions};
+      return SystemSolution{.type = solutionType, .m_solutions=solutions};
     }
     case SolutionType::INFINITELY_MANY_SOLUTIONS:
     {
@@ -179,12 +178,12 @@ Solution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b) {
 
       std::set<int> pivot_cols;
       std::set<int> non_pivot_cols;
-      std::unordered_map<int, int> pivotColToRowMap;
+      std::unordered_map<int, int> pivot_col_to_row_map;
 
       while (r < RREF.m_rows && c < RREF.m_cols - 1) {
         if (matrix[r][c] != 0) {
           pivot_cols.insert(c);
-          pivotColToRowMap[c] = r;
+          pivot_col_to_row_map[c] = r;
           ++r;
         }
         ++c;
@@ -196,40 +195,36 @@ Solution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b) {
         }
       }
 
-      std::unordered_map<int, solutionPair> solutionMap; 
-      std::vector<solutionPair> solutions;
+      std::unordered_map<int, VariableSolution> solutionMap; 
+      std::vector<VariableSolution> solutions;
 
       // iterate backwards - bottom up DP :)
       for (auto it = pivot_cols.rbegin(); it != pivot_cols.rend(); ++it) {
         auto currCol = *it; 
-        auto currRow = pivotColToRowMap[currCol];
+        auto currRow = pivot_col_to_row_map[currCol];
         auto rhsVal = matrix[currRow][RREF.m_cols - 1];
         //value component
         for(int c = currCol + 1; c < RREF.m_cols - 1; ++c) {
           if (matrix[currRow][c] == 0) continue;
           // if non pivot, easy! just deduct the free variable.
-          auto& opt = solutionMap[currCol].second;
-          if (!opt.has_value()) {
-            opt.emplace(std::unordered_map<int, double>());
-          }
-          auto& currMap = opt.value();
+          auto& currMap = solutionMap[currCol].variable_count_map;
           if (non_pivot_cols.contains(c)) {
             currMap[c] -= matrix[currRow][c];
           } else {
             // if pivot, do some math. 
-            solutionMap[currCol].first -= solutionMap[c].first * matrix[currRow][c];
+            solutionMap[currCol].val -= solutionMap[c].val * matrix[currRow][c];
             for(const auto& [key, val]: currMap) {
               if (val == 0) continue;
               currMap[key] -= val * matrix[currRow][c];
             }
           }
         }
-        solutionMap[currCol].first += rhsVal;
+        solutionMap[currCol].val += rhsVal;
       }
       for(int i = 0; i < RREF.m_cols - 1; ++i) {
         solutions.emplace_back(solutionMap[i]);
       } 
-      return Solution{.type = solutionType, .m_solutions=solutions, .freeVariables=non_pivot_cols, .num_free_variables=static_cast<int>(non_pivot_cols.size())};
+      return SystemSolution{.type = solutionType, .m_solutions=solutions, .free_variables=non_pivot_cols, .num_free_variables=static_cast<int>(non_pivot_cols.size())};
     }
   }
 }
@@ -246,11 +241,11 @@ SolutionType get_solution_type(const Matrix<double>& A) {
     }
     ++c;
   }
-  int numVariables = A.m_cols - 1; 
-  int nonZeroRows = r;
+  int num_variables = A.m_cols - 1; 
+  int non_zero_rows = r;
   // only one solution -> every col is a pivot col except the last
   // OR alternatively, a consistent linear system has only one solution if the number of variables in the linear system is equal to the number of nonzero rows in a row-echelon form of the augmented matrix.
   // infinitely many solutions -> at least non pivot col that is not the last col
-  return numVariables == nonZeroRows ? SolutionType::ONE_SOLUTION: SolutionType::INFINITELY_MANY_SOLUTIONS;
+  return num_variables == non_zero_rows ? SolutionType::ONE_SOLUTION: SolutionType::INFINITELY_MANY_SOLUTIONS;
 }
 

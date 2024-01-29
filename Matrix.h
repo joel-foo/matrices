@@ -94,7 +94,7 @@ class Matrix {
     }
 
     //friend non member functions below:
-    friend int maxCol(int r, int c, const Matrix<double>& matrix);
+    friend int compute_max_in_col(int r, int c, const Matrix<double>& matrix);
 
     //produces a matrix of Row Echelon Form (REF), note: all zero rows are guaranteed to be at bottom of both the REF and RREF. 
     friend Matrix<double> gaussian_elimination(const Matrix<double>& matrix);
@@ -102,17 +102,17 @@ class Matrix {
     //produces a matrix of Reduced Row Echelon Form (RREF). note: RREF is unique while REF is not. 
     friend Matrix<double> gauss_jordan_elimination(const Matrix<double>& matrix);
 
-    friend int getRank(const Matrix<double>& m);
+    friend int get_rank(const Matrix<double>& m);
 
     // row space and col space are obtained from RREF for simplicity. 
-    friend TwoDVector<double> getRowSpace(const Matrix<double>& m);
-    friend TwoDVector<double> getColSpace(const Matrix<double>& m);
+    friend TwoDVector<double> get_row_space(const Matrix<double>& m);
+    friend TwoDVector<double> get_col_space(const Matrix<double>& m);
 
     friend Matrix<double> inverse(const Matrix<double>& m);
 
     friend SolutionType get_solution_type(const Matrix<double>& A);
 
-    friend Solution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b);
+    friend SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b);
 };
 
 
@@ -246,7 +246,7 @@ Matrix<T> operator*(const Matrix<T>& lhs, const Matrix<T>& rhs) {
     throw std::runtime_error("Rows and cols dimension mismatch!");
   }  
   // normal method
-  Matrix<T> result {lhs.getRows(), rhs.getCols()};
+  Matrix<T> result {lhs.m_rows, rhs.m_cols};
   for (int i = 0; i < result.m_rows; ++i) {
     for (int j = 0; j < result.m_cols; ++j) {
       for (int k = 0; k < lhs.m_cols; ++k) {
@@ -284,7 +284,7 @@ Matrix<T> operator-(const Matrix<T>& lhs, const Matrix<T>& rhs) {
 
 template<class T>
 Matrix<T> Matrix<T>::transpose() const {
-  Matrix<T> result {getCols(), getRows()};
+  Matrix<T> result {m_cols, m_rows};
   for (int i = 0; i < m_cols; ++i) {
     for (int j = 0; j < m_rows; ++j) {
       result.m_matrix[i][j] = m_matrix[j][i];
@@ -302,8 +302,8 @@ Matrix<T> Matrix<T>::concat(const Matrix<T>& rhs, int axis) const {
     }
     Matrix<T> result = *this;
     for (int i = 0; i < m_rows; ++i) {
-      auto& leftRow = result.m_matrix[i], rightRow = rhs.m_matrix[i];
-      leftRow.insert(leftRow.end(), rightRow.begin(), rightRow.end());
+      auto& left_row = result.m_matrix[i], right_row = rhs.m_matrix[i];
+      left_row.insert(left_row.end(), right_row.begin(), right_row.end());
     }
     result.m_cols += rhs.m_cols;
     return result;
@@ -313,8 +313,8 @@ Matrix<T> Matrix<T>::concat(const Matrix<T>& rhs, int axis) const {
       throw std::runtime_error("Fail to join vertically due to mismatched col number");
     }
     Matrix<T> result = *this;
-    auto& leftMatrix = result.m_matrix, rightMatrix = rhs.m_matrix;
-    leftMatrix.insert(leftMatrix.end(), rightMatrix.begin(), rightMatrix.end());
+    auto& left_matrix = result.m_matrix, right_matrix = rhs.m_matrix;
+    left_matrix.insert(left_matrix.end(), left_matrix.begin(), left_matrix.end());
     result.m_rows += rhs.m_rows;
     return result;
   }

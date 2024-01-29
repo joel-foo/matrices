@@ -11,7 +11,7 @@ namespace Theorems {
     // B: 4 x 3 (n x k)
     Md B {{1,2,0},{2,3,8},{3,3,6},{7,2,5}};
     Md AB = A*B;
-    int rank_A = getRank(A), rank_B = getRank(B), rank_AB = getRank(A*B);
+    int rank_A = get_rank(A), rank_B = get_rank(B), rank_AB = get_rank(A*B);
     void test() {
       assert(rank_A == 2);
 
@@ -20,7 +20,7 @@ namespace Theorems {
 
       // only zero matrix has rnak 0 
       Md zeroMatrix (2,3);
-      assert(getRank(zeroMatrix) == 0);
+      assert(get_rank(zeroMatrix) == 0);
 
       // rank(AB) <= min(rank(A), rank(B))
       assert(rank_AB <= std::min(rank_A, rank_B));
@@ -30,12 +30,12 @@ namespace Theorems {
 
       // subaddivity: rank(A + C) <= rank(A) + rank(C), both A and C of same dimension. 
       Md C = {{3,4,2,5},{9,10,2,3},{3,3,11,0}};
-      assert(getRank(A + C) <= rank_A + getRank(C));
+      assert(get_rank(A + C) <= rank_A + get_rank(C));
 
       // rank(A^T) = rank(A) = rank(AA^T) = rank(A^TA)
-      assert(rank_A == getRank(A.transpose()));
-      assert(rank_A == getRank(A * A.transpose()));
-      assert(rank_A == getRank(A.transpose() * A));
+      assert(rank_A == get_rank(A.transpose()));
+      assert(rank_A == get_rank(A * A.transpose()));
+      assert(rank_A == get_rank(A.transpose() * A));
     }
   }
   void test() {

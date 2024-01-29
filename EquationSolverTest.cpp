@@ -65,7 +65,7 @@ namespace EquationSolverTest {
     std::vector<double> y;
     // resize = allocation + instance creation; reserve = allocation only
     y.resize(x.size());
-    std::transform(S.m_solutions.begin(), S.m_solutions.end(), y.begin(), [](auto p){return p.first;});
+    std::transform(S.m_solutions.begin(), S.m_solutions.end(), y.begin(), [](auto p){return p.val;});
     assert(x == y);
 
     a = {{1,1,2}, {1,-1,-1}, {1,1,-1}};
