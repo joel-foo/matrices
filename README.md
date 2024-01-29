@@ -1,15 +1,15 @@
-### Linear algebra from scratch
+## Linear algebra library
 
-- Fundamental operations:
+- Fundamental matrix operations:
 
-  - Matrix addition
-  - Matrix subtraction
+  - Addition
+  - Subtraction
   - Matrix and scalar multiplication
   - Transpose
   - Flatten
-  - Concatenating two matrices either horizontally or vertically
+  - Concatenating two matrices
 
-- Other operations:
+- More exciting operations:
   - Gaussian elimination
   - Gauss jordan elimination
   - Rank of matrix
@@ -24,8 +24,8 @@ An example of solving a system with an infinite number of solutions:
 ```cpp
 #include <iostream>
 
-#include "Solution.h"
 #include "Matrix.h"
+#include "Solution.h"
 
 int main() {
   // A is the coefficient matrix
@@ -34,7 +34,7 @@ int main() {
   // b is the column matrix of constants
   Matrix<double> b {{2},{3},{4}};
 
-  Solution solution = solve_linear_system(A, b);
+  SystemSolution solution = solve_linear_system(A, b);
 
   // prints "x1:a1, x2:2+0.5a2, x3:1-a2, x4:a2, x5:2 where a1, a2 are arbitrary parameters"
   std::cout << solution << "\n";
