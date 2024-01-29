@@ -62,7 +62,7 @@ Matrix<double> gauss_jordan_elimination(const Matrix<double>& m) {
     // apply scaling factor
     if (row[c] != 1) {
       double factor = row[c];
-      for(int j = c; j < result.m_cols; ++j) {
+      for (int j = c; j < result.m_cols; ++j) {
         row[j] /= factor;
         round_if_below_threshold(row[j]);
       }
@@ -140,7 +140,7 @@ Matrix<double> inverse(const Matrix<double>& matrix) {
   auto augmented_matrix = matrix.concat(IdentityMatrix<double>(rank));
   auto result = gauss_jordan_elimination(augmented_matrix);
   TwoDVector<double> vec;
-  for(int i = 0; i < rank; i++) {
+  for (int i = 0; i < rank; i++) {
     std::vector<double> v(result.m_matrix[i].begin() + rank, result.m_matrix[i].end());
     vec.emplace_back(std::move(v));
   }
@@ -189,7 +189,7 @@ SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>
         ++c;
       }
 
-      for(int i = 0; i < RREF.m_cols - 1; ++i) {
+      for (int i = 0; i < RREF.m_cols - 1; ++i) {
         if (!pivot_cols.contains(i)) {
           non_pivot_cols.insert(i);
         }
@@ -204,7 +204,7 @@ SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>
         auto currRow = pivot_col_to_row_map[currCol];
         auto rhsVal = matrix[currRow][RREF.m_cols - 1];
         //value component
-        for(int c = currCol + 1; c < RREF.m_cols - 1; ++c) {
+        for (int c = currCol + 1; c < RREF.m_cols - 1; ++c) {
           if (matrix[currRow][c] == 0) continue;
           // if non pivot, easy! just deduct the free variable.
           auto& currMap = solutionMap[currCol].variable_count_map;
@@ -213,7 +213,7 @@ SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>
           } else {
             // if pivot, do some math. 
             solutionMap[currCol].val -= solutionMap[c].val * matrix[currRow][c];
-            for(const auto& [key, val]: currMap) {
+            for (const auto& [key, val]: currMap) {
               if (val == 0) continue;
               currMap[key] -= val * matrix[currRow][c];
             }
@@ -221,7 +221,7 @@ SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>
         }
         solutionMap[currCol].val += rhsVal;
       }
-      for(int i = 0; i < RREF.m_cols - 1; ++i) {
+      for (int i = 0; i < RREF.m_cols - 1; ++i) {
         solutions.emplace_back(solutionMap[i]);
       } 
       return SystemSolution{.type = solutionType, .m_solutions=solutions, .free_variables=non_pivot_cols, .num_free_variables=static_cast<int>(non_pivot_cols.size())};

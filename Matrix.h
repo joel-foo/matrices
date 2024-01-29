@@ -164,7 +164,7 @@ Matrix<T>::Matrix(const TwoDList<T>& matrix) {
     throw std::runtime_error("Matrix cannot be empty");
   }
   std::set<std::size_t> cols;
-  for(const auto& row: matrix) {
+  for (const auto& row: matrix) {
     cols.insert(row.size());
     if (cols.size() > 1) {
       throw std::runtime_error("Inconsistent number of columns in matrix!");
@@ -323,7 +323,7 @@ Matrix<T> Matrix<T>::concat(const Matrix<T>& rhs, int axis) const {
 template<class T>
 std::vector<T> Matrix<T>::flatten() const {
   std::vector<T> vec;
-  for(const auto& row: m_matrix) {
+  for (const auto& row: m_matrix) {
     vec.insert(vec.end(), row.begin(), row.end());
   }
   return vec;
