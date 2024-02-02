@@ -42,14 +42,17 @@ An example program of solving a system with an infinite number of solutions:
 ```cpp
 #include "Matrix.h"
 
+// make your own aliases
+typedef linalg::Matrix<double> Md;
+
 int main() {
   // A is the coefficient matrix
-  Matrix<double> A = {{0,2,2,1,-2},{0,0,1,1,1},{0,0,0,0,2}};
+  Md A = {{0,2,2,1,-2},{0,0,1,1,1},{0,0,0,0,2}};
 
   // b is the column matrix of constants
-  Matrix<double> b = {{2},{3},{4}};
+  Md b = {{2},{3},{4}};
 
-  Solution solution = solve_linear_system(A, b);
+  linalg::SystemSolution solution = linalg::solve_linear_system(A, b);
 
   // prints "x1:a1, x2:2+0.5a2, x3:1-a2, x4:a2, x5:2 where a1, a2 are arbitrary parameters"
   std::cout << solution << "\n";
