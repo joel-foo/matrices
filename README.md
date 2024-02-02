@@ -65,10 +65,10 @@ int main() {
 
   // setting a1 = 1, a2 = 2
   // prints: (1, 3, -1, 2, 2), which corresponds to x1: 1, x2: 3, x3: -1, x4: 2, x5: 2
-  std::cout << fun(1, 2) << "\n";
+  std::cout << fun({1, 2}) << "\n";
 
   // prints: (2, 3.5, -2, 3, 2)
-  std::cout << fun(2, 3) << "\n";
+  std::cout << fun({2, 3}) << "\n";
   return 0;
 }
 ```
