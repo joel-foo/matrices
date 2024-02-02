@@ -1,6 +1,3 @@
-# cmake_minimum_required(VERSION 3.28.2)
-# project(linalg_test VERSION 1.0)
-
 include_directories(${PROJECT_SOURCE_DIR}/include/linalg)
 include(FetchContent)
 FetchContent_Declare(
@@ -9,9 +6,6 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(googletest)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 enable_testing()
 
