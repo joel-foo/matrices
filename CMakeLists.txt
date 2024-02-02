@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28.2)
+cmake_minimum_required(VERSION 3.28.1)
 project(linalg 
         VERSION 1.0
         DESCRIPTION "A Linear Algebra Library"
