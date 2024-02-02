@@ -2,7 +2,7 @@
 
 #include "Matrix.h"
 
-typedef Matrix<double> Md;
+typedef linalg::Matrix<double> Md;
 
 namespace Theorems {
   namespace RankTheorems {

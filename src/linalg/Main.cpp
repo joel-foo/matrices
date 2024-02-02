@@ -12,6 +12,9 @@ int main() {
   // gaussian, gauss jordan, systems of linear equations
   EquationSolverTest::run();
 
+  linalg::Matrix<double> m (2,3);
+  std::cout << linalg::get_rank(m) << "\n";
+
   // fun theorem stuff
   Theorems::test();
 

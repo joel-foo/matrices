@@ -1,15 +1,15 @@
-## Linear algebra library
+### Matrices in C++
 
-- Fundamental matrix operations:
+- Fundamental operations:
 
-  - Addition
-  - Subtraction
+  - Matrix addition
+  - Matrix subtraction
   - Matrix and scalar multiplication
   - Transpose
-  - Flatten
-  - Concatenating two matrices
+  - Concatenating two matrices either horizontally or vertically
 
-- More exciting operations:
+- Other operations:
+
   - Gaussian elimination
   - Gauss jordan elimination
   - Rank of matrix
@@ -17,24 +17,39 @@
   - Column space of matrix
   - **Solving linear systems (any kind!)**
 
-For example, consider a system of 3 equations in 5 variables: x1 - x5, which is represented as a coefficient matrix A and column vector of constants b. Note that the types of these matrices must be parametrised with `Double`, in the cases where solving equations are involved.
+- This project uses **CMake** and **Google Tests**.
 
-An example of solving a system with an infinite number of solutions:
+### Build using make
+
+```bash
+# in the root project directory
+cmake -S . -B build
+
+cd build
+
+make
+
+# to run tests
+make test / ctest
+```
+
+### Example
+
+Consider a system of equations in 5 variables: x1 - x5, which is represented as a coefficient matrix A and column vector of constants b. Note that the types of these matrices must be parametrised with `Double`, in the cases where solving equations are involved.
+
+An example program of solving a system with an infinite number of solutions:
 
 ```cpp
-#include <iostream>
-
 #include "Matrix.h"
-#include "Solution.h"
 
 int main() {
   // A is the coefficient matrix
-  Matrix<double> A {{0,2,2,1,-2},{0,0,1,1,1},{0,0,0,0,2}};
+  Matrix<double> A = {{0,2,2,1,-2},{0,0,1,1,1},{0,0,0,0,2}};
 
   // b is the column matrix of constants
-  Matrix<double> b {{2},{3},{4}};
+  Matrix<double> b = {{2},{3},{4}};
 
-  SystemSolution solution = solve_linear_system(A, b);
+  Solution solution = solve_linear_system(A, b);
 
   // prints "x1:a1, x2:2+0.5a2, x3:1-a2, x4:a2, x5:2 where a1, a2 are arbitrary parameters"
   std::cout << solution << "\n";
@@ -47,10 +62,10 @@ int main() {
 
   // setting a1 = 1, a2 = 2
   // prints: (1, 3, -1, 2, 2), which corresponds to x1: 1, x2: 3, x3: -1, x4: 2, x5: 2
-  std::cout << fun({1, 2}) << "\n";
+  std::cout << fun(1, 2) << "\n";
 
   // prints: (2, 3.5, -2, 3, 2)
-  std::cout << fun({2, 3}) << "\n";
+  std::cout << fun(2, 3) << "\n";
   return 0;
 }
 ```

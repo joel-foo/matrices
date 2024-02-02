@@ -6,10 +6,12 @@
 #include "Matrix.h"
 #include "Solution.h"
 
-typedef Matrix<double> Md;
+typedef linalg::Matrix<double> Md;
 
 namespace EquationSolverTest {
     void test_get_solution_type() {
+    using namespace Solution;
+
     // REF of augmented matrix of inconsistent system
     Md A = {{3,2,3,4},{0,0,1,1},{0,0,0,2}};
     assert(get_solution_type(A) == SolutionType::NO_SOLUTION);

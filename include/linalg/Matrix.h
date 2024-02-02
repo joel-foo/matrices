@@ -11,6 +11,8 @@
 #include "Solution.h"
 #include "Vectors.h"
 
+namespace linalg {
+
 template <typename T> 
 using TwoDList = std::initializer_list<std::initializer_list<T>>;
 
@@ -93,6 +95,8 @@ class Matrix {
       return m_matrix == other.m_matrix;
     }
 
+    friend int hi();
+
     //friend non member functions below:
     friend int compute_max_in_col(int r, int c, const Matrix<double>& matrix);
 
@@ -110,10 +114,28 @@ class Matrix {
 
     friend Matrix<double> inverse(const Matrix<double>& m);
 
-    friend SolutionType get_solution_type(const Matrix<double>& A);
+    friend Solution::SolutionType get_solution_type(const Matrix<double>& A);
 
-    friend SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b);
+    friend Solution::SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b);
 };
+
+// int hi();
+
+int compute_max_in_col(int r, int c, const Matrix<double>& matrix);
+
+//produces a matrix of Row Echelon Form (REF), note: all zero rows are guaranteed to be at bottom of both the REF and RREF. 
+Matrix<double> gaussian_elimination(const Matrix<double>& matrix);
+
+//produces a matrix of Reduced Row Echelon Form (RREF). note: RREF is unique while REF is not. 
+Matrix<double> gauss_jordan_elimination(const Matrix<double>& matrix);
+
+int get_rank(const Matrix<double>& m);
+
+// row space and col space are obtained from RREF for simplicity. 
+TwoDVector<double> get_row_space(const Matrix<double>& m);
+TwoDVector<double> get_col_space(const Matrix<double>& m);
+
+Matrix<double> inverse(const Matrix<double>& m);
 
 
 template <class T>
@@ -349,6 +371,8 @@ T& Matrix<T>::operator()(int r, int c) {
     throw std::runtime_error("Invalid column");
   }
   return m_matrix[r][c];
+}
+
 }
 
 #endif

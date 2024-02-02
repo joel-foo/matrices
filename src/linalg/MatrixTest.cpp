@@ -2,8 +2,8 @@
 
 #include "Matrix.h"
 
-typedef Matrix<int> Mint;
-typedef Matrix<double> Md;
+typedef linalg::Matrix<int> Mint;
+typedef linalg::Matrix<double> Md;
 
 namespace MatrixTest {
     void test_add_matrices() {
@@ -45,7 +45,7 @@ namespace MatrixTest {
       try {
         A(3,3);
       } catch (const std::runtime_error& error) {
-        exceptionThrown = true;
+        exceptionThrown  = true;
       }
       assert(exceptionThrown);
     }

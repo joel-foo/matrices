@@ -8,15 +8,19 @@
 
 #include "Vectors.h"
 
+namespace Solution {
+  struct SystemSolution;
+}
+
+std::ostream& operator<< (std::ostream& out, Solution::SystemSolution s);
+
+namespace Solution {
+
 enum class SolutionType {
   NO_SOLUTION,
   ONE_SOLUTION,
   INFINITELY_MANY_SOLUTIONS
 };
-
-struct SystemSolution;
-
-std::ostream& operator<< (std::ostream& out, SystemSolution s);
 
 struct VariableSolution {
   double val;
@@ -78,4 +82,5 @@ struct SystemSolution {
   }
 };
 
+}
 #endif

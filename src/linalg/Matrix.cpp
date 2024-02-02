@@ -8,6 +8,9 @@
 #include "Solution.h"
 #include "Vectors.h"
 
+
+namespace linalg {
+
 int compute_max_in_col(int r, int c, const Matrix<double>& m) {
   const TwoDVector<double>& matrix = m.m_matrix;
   double max_val = std::abs(matrix[r][c]);
@@ -150,9 +153,10 @@ Matrix<double> inverse(const Matrix<double>& matrix) {
 // solves the equation Ax = b 
 // => given m equations, n unknowns.
 // => A is a m x n matrix, x is n x 1, b is a m x 1 column matrix. 
-SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b) {
+Solution::SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b) {
   // a special case: assuming A is nxn, if A is invertible => x = A^-1(b), x is unique IFF A is invertible (t)
   // proof: https://www.quora.com/How-do-I-show-that-AX-B-has-a-unique-solution-if-and-only-if-Matrix-A-is-invertible.
+  using namespace Solution;
   if (A.m_rows != b.m_rows) {
     throw std::runtime_error("A and b need to have the same number of rows");
   }
@@ -230,7 +234,8 @@ SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>
 }
 
 // A is a REF or RREF form. 
-SolutionType get_solution_type(const Matrix<double>& A) {
+Solution::SolutionType get_solution_type(const Matrix<double>& A) {
+  using namespace Solution;
   // inconsistent if if the last column of a row-echelon form of the augmented matrix is a pivot column
   int r = 0, c = 0;
   auto& matrix = A.m_matrix;
@@ -249,3 +254,4 @@ SolutionType get_solution_type(const Matrix<double>& A) {
   return num_variables == non_zero_rows ? SolutionType::ONE_SOLUTION: SolutionType::INFINITELY_MANY_SOLUTIONS;
 }
 
+}

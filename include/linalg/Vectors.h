@@ -41,4 +41,5 @@ std::ostream& operator<<(std::ostream& out, const TwoDVector<T>& vec) {
 bool operator==(const std::vector<double>& v1, const std::vector<double>& v2);
 bool operator==(const TwoDVector<double> &v1, const TwoDVector<double> &v2);
 
+
 #endif
