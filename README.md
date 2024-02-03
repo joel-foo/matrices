@@ -52,7 +52,7 @@ int main() {
   // b is the column matrix of constants
   Md b = {{2},{3},{4}};
 
-  linalg::SystemSolution solution = linalg::solve_linear_system(A, b);
+  linalg::Solution::SystemSolution solution = linalg::solve_linear_system(A, b);
 
   // prints "x1:a1, x2:2+0.5a2, x3:1-a2, x4:a2, x5:2 where a1, a2 are arbitrary parameters"
   std::cout << solution << "\n";
