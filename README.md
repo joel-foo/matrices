@@ -35,7 +35,7 @@ make test / ctest
 
 ### Example
 
-### After building the project using make, the following example program can found in build/src directory. Navigate to that directory and run ./Demo to execute the program.
+_After building the project using make, the following example program can found in build/src directory. Navigate to that directory and run ./Demo to execute the program._
 
 Consider a system of equations in 5 variables: x1 - x5, which is represented as a coefficient matrix A and column vector of constants b. Note that the types of these matrices must be parametrised with `Double`, in the cases where solving equations are involved.
 
