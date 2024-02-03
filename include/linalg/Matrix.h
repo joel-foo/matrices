@@ -95,8 +95,6 @@ class Matrix {
       return m_matrix == other.m_matrix;
     }
 
-    friend int hi();
-
     //friend non member functions below:
     friend int compute_max_in_col(int r, int c, const Matrix<double>& matrix);
 
@@ -119,7 +117,6 @@ class Matrix {
     friend Solution::SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b);
 };
 
-// int hi();
 
 int compute_max_in_col(int r, int c, const Matrix<double>& matrix);
 

@@ -1,15 +1,11 @@
 #include <iostream>
 
-#include "EquationSolverTest.h"
 #include "Theorems.h"
 
 int main() {
 
-  // gaussian, gauss jordan, systems of linear equations
-  EquationSolverTest::run();
-
   // fun theorem stuff
-  Theorems::test();
+  Theorems::verify();
 
   std::cout << "all tests pass!" << "\n";
 

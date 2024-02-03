@@ -38,7 +38,7 @@ namespace Theorems {
       assert(rank_A == get_rank(A.transpose() * A));
     }
   }
-  void test() {
+  void verify() {
     RankTheorems::test();
   }
 }

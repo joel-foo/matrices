@@ -8,11 +8,13 @@
 
 #include "Vectors.h"
 
-namespace Solution {
+namespace linalg::Solution {
   struct SystemSolution;
 }
 
-std::ostream& operator<< (std::ostream& out, Solution::SystemSolution s);
+std::ostream& operator<< (std::ostream& out, linalg::Solution::SystemSolution s);
+
+namespace linalg {
 
 namespace Solution {
 
@@ -82,5 +84,6 @@ struct SystemSolution {
   }
 };
 
+}
 }
 #endif
