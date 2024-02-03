@@ -7,7 +7,7 @@ int main() {
   // fun theorem stuff
   Theorems::verify();
 
-  std::cout << "all tests pass!" << "\n";
+  std::cout << "All theorems verified!" << "\n";
 
   return 0;
 }

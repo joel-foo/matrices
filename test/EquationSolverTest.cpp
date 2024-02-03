@@ -5,30 +5,32 @@
 
 typedef linalg::Matrix<double> Md;
 
-using namespace linalg::Solution;
+using namespace linalg;
 
 // checking types of solutions
 
 TEST(EquationSolverTest, TypeNoSolution) {
  // REF of augmented matrix of inconsistent system
   Md A {{3,2,3,4},{0,0,1,1},{0,0,0,2}};
-  EXPECT_EQ(get_solution_type(A), SolutionType::NO_SOLUTION);
+  EXPECT_EQ(get_solution_type(A), Solution::SolutionType::NO_SOLUTION);
 }
 
 TEST(EquationSolverTest, TypeOneSolution) {
   // REF of augmented matrix of consistent system (with one soln)
+  using enum Solution::SolutionType;
   Md A {{1,2,3,4},{0,2,0,1},{0,0,-1,2}};
   Md B {{1,1,2,3,4},{0,2,0,1,-1},{0,0,4,-1,2},{0,0,0,-1,2},{0,0,0,0,0}};
-  EXPECT_EQ(get_solution_type(A), SolutionType::ONE_SOLUTION);
-  EXPECT_EQ(get_solution_type(B), SolutionType::ONE_SOLUTION);
+  EXPECT_EQ(get_solution_type(A), ONE_SOLUTION);
+  EXPECT_EQ(get_solution_type(B), ONE_SOLUTION);
 }
 
 TEST(EquationSolverTest, TypeInfiniteSolutions) {
   // REF of augmented matrix of consistent system (with infinitely many solns)
+  using enum Solution::SolutionType;
   Md A {{5,1,2,3,4},{0,0,-1,0,1},{0,0,0,1,2}};
   Md B {{0,1,2,3,4},{0,0,-1,0,1},{0,0,0,1,2}};
-  EXPECT_EQ(get_solution_type(A), SolutionType::INFINITELY_MANY_SOLUTIONS);
-  EXPECT_EQ(get_solution_type(B), SolutionType::INFINITELY_MANY_SOLUTIONS);
+  EXPECT_EQ(get_solution_type(A), INFINITELY_MANY_SOLUTIONS);
+  EXPECT_EQ(get_solution_type(B), INFINITELY_MANY_SOLUTIONS);
 }
 
 // solving the linear systems

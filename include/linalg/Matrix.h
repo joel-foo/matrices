@@ -117,23 +117,23 @@ class Matrix {
     friend Solution::SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b);
 };
 
-
 int compute_max_in_col(int r, int c, const Matrix<double>& matrix);
 
-//produces a matrix of Row Echelon Form (REF), note: all zero rows are guaranteed to be at bottom of both the REF and RREF. 
 Matrix<double> gaussian_elimination(const Matrix<double>& matrix);
 
-//produces a matrix of Reduced Row Echelon Form (RREF). note: RREF is unique while REF is not. 
 Matrix<double> gauss_jordan_elimination(const Matrix<double>& matrix);
 
 int get_rank(const Matrix<double>& m);
 
-// row space and col space are obtained from RREF for simplicity. 
 TwoDVector<double> get_row_space(const Matrix<double>& m);
+
 TwoDVector<double> get_col_space(const Matrix<double>& m);
 
 Matrix<double> inverse(const Matrix<double>& m);
 
+Solution::SolutionType get_solution_type(const Matrix<double>& A);
+
+Solution::SystemSolution solve_linear_system(const Matrix<double>& A, const Matrix<double>& b);
 
 template <class T>
 class IdentityMatrix: public Matrix<T> {

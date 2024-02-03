@@ -7,9 +7,7 @@
 
 #include "Solution.h"
 
-using namespace linalg::Solution;
-
-std::ostream& operator<< (std::ostream& out, SystemSolution s) {
+std::ostream& operator<< (std::ostream& out, linalg::Solution::SystemSolution s) {
   //to 3sf, if necessary.
   out << std::setprecision(3);
   if (!s.contains_free_variables()) {
